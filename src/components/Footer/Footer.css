@@ -36,21 +36,26 @@
 .footer-logo-mark {
   width: 34px;
   height: 34px;
-  border-radius: 10px;
+  border-radius: 8px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: #fff;
-  background: linear-gradient(135deg, var(--accent), #22A8FF);
-  box-shadow: var(--shadow-accent);
+  background: transparent;
+  box-shadow: none;
+  overflow: visible;
 }
 
 .footer-logo-text {
   display: inline-flex;
   align-items: baseline;
   gap: 2px;
+}
+
+.footer-logo-image {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+  display: block;
 }
 
 .footer-logo span {

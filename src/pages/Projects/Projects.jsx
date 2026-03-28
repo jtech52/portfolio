@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiGithub, FiExternalLink, FiX, FiArrowRight } from 'react-icons/fi';
-import { projects, categories } from '../../data/projects';
+import { FiGithub, FiExternalLink, FiX, FiArrowRight, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+import { getPublicProjects } from '../../firebase/portfolioService';
 import Button from '../../components/Button/Button';
 import './Projects.css';
 
@@ -9,6 +9,37 @@ const Projects = () => {
   const [activeFilter, setActiveFilter] = useState('All');
   const [selectedProject, setSelectedProject] = useState(null);
   const [activeImage, setActiveImage] = useState(0);
+  const [projects, setProjects] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadProjects = async () => {
+      try {
+        const loadedProjects = await getPublicProjects();
+        if (!cancelled && loadedProjects.length) {
+          setProjects(loadedProjects);
+        }
+      } catch {
+      } finally {
+        if (!cancelled) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    loadProjects();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const categories = useMemo(() => {
+    const dynamicCategories = [...new Set(projects.map((project) => project.category).filter(Boolean))];
+    return dynamicCategories.length ? ['All', ...dynamicCategories] : ['All'];
+  }, [projects]);
 
   const filtered = activeFilter === 'All'
     ? projects
@@ -23,6 +54,26 @@ const Projects = () => {
   const closeModal = () => {
     setSelectedProject(null);
     document.body.style.overflow = '';
+  };
+
+  const selectedImages = useMemo(() => {
+    if (!selectedProject) return [];
+
+    const images = Array.isArray(selectedProject.images) && selectedProject.images.length
+      ? selectedProject.images.filter(Boolean)
+      : [selectedProject.image].filter(Boolean);
+
+    return images.slice(0, 5);
+  }, [selectedProject]);
+
+  const showPrevImage = () => {
+    if (!selectedImages.length) return;
+    setActiveImage((prev) => (prev - 1 + selectedImages.length) % selectedImages.length);
+  };
+
+  const showNextImage = () => {
+    if (!selectedImages.length) return;
+    setActiveImage((prev) => (prev + 1) % selectedImages.length);
   };
 
   return (
@@ -64,71 +115,93 @@ const Projects = () => {
       {/* ── GRID ── */}
       <section className="projects-main">
         <div className="container">
-          <AnimatePresence mode="wait">
+          {isLoading ? (
             <motion.div
-              key={activeFilter}
-              className="projects-grid"
+              className="projects-empty-state"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.4 }}
             >
-              {filtered.map((project, i) => (
-                <motion.div
-                  key={project.id}
-                  className="card project-card"
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, delay: i * 0.07 }}
-                  onClick={() => openModal(project)}
-                >
-                  <div className="project-card-inner">
-                    <div className="project-img-wrap">
-                      <img src={project.image} alt={project.title} loading="lazy" />
-                      <span className="project-badge">{project.category}</span>
-                      <div className="project-img-overlay">
-                        <button
-                          className="overlay-btn"
-                          onClick={(e) => { e.stopPropagation(); openModal(project); }}
-                        >
-                          Details
-                        </button>
-                        <a
-                          href={project.liveLink}
-                          className="overlay-btn outline"
-                          target="_blank"
-                          rel="noreferrer"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <FiExternalLink size={13} /> Live
-                        </a>
-                      </div>
-                    </div>
-
-                    <div className="project-body">
-                      <h3 className="project-title">{project.title}</h3>
-                      <p className="project-desc">{project.description}</p>
-
-                      <div className="project-tags">
-                        {project.technologies.slice(0, 4).map((t) => (
-                          <span key={t} className="tech-tag">{t}</span>
-                        ))}
-                      </div>
-
-                      <div className="project-links">
-                        <a href={project.githubLink} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()}>
-                          <FiGithub size={14} /> Source
-                        </a>
-                        <a href={project.liveLink} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()}>
-                          <FiExternalLink size={14} /> Live Demo
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
+              <h3>Loading projects...</h3>
+              <p>Fetching your latest work from Firebase.</p>
             </motion.div>
-          </AnimatePresence>
+          ) : filtered.length ? (
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeFilter}
+                className="projects-grid"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.4 }}
+              >
+                {filtered.map((project, i) => (
+                  <motion.div
+                    key={project.id}
+                    className="card project-card"
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, delay: i * 0.07 }}
+                    onClick={() => openModal(project)}
+                  >
+                    <div className="project-card-inner">
+                      <div className="project-img-wrap">
+                        <img src={project.image} alt={project.title} loading="lazy" />
+                        <span className="project-badge">{project.category}</span>
+                        <div className="project-img-overlay">
+                          <button
+                            className="overlay-btn"
+                            onClick={(e) => { e.stopPropagation(); openModal(project); }}
+                          >
+                            Details
+                          </button>
+                          <a
+                            href={project.liveLink}
+                            className="overlay-btn outline"
+                            target="_blank"
+                            rel="noreferrer"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <FiExternalLink size={13} /> Live
+                          </a>
+                        </div>
+                      </div>
+
+                      <div className="project-body">
+                        <h3 className="project-title">{project.title}</h3>
+                        <p className="project-desc">{project.description}</p>
+
+                        <div className="project-tags">
+                          {project.technologies.slice(0, 4).map((t) => (
+                            <span key={t} className="tech-tag">{t}</span>
+                          ))}
+                        </div>
+
+                        <div className="project-links">
+                          <a href={project.githubLink} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()}>
+                            <FiGithub size={14} /> Source
+                          </a>
+                          <a href={project.liveLink} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()}>
+                            <FiExternalLink size={14} /> Live Demo
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </motion.div>
+            </AnimatePresence>
+          ) : (
+            <motion.div
+              className="projects-empty-state"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4 }}
+            >
+              <h3>No projects yet</h3>
+              <p>Add your project data in Firebase to display it here.</p>
+            </motion.div>
+          )}
         </div>
       </section>
 
@@ -172,9 +245,47 @@ const Projects = () => {
               <button className="modal-close" onClick={closeModal}><FiX /></button>
 
               <div className="modal-images">
-                <img src={selectedProject.images[activeImage]} alt={selectedProject.title} />
+                <img src={selectedImages[activeImage] || selectedProject.image} alt={selectedProject.title} />
+                {selectedImages.length > 1 && (
+                  <>
+                    <button className="modal-nav modal-nav-left" onClick={showPrevImage} aria-label="Previous image">
+                      <FiChevronLeft />
+                    </button>
+                    <button className="modal-nav modal-nav-right" onClick={showNextImage} aria-label="Next image">
+                      <FiChevronRight />
+                    </button>
+                  </>
+                )}
+              </div>
+
+              {selectedImages.length > 1 && (
+                <div className="modal-thumbs-wrap">
+                  <button className="thumb-nav" onClick={showPrevImage} aria-label="Scroll images left">
+                    <FiChevronLeft />
+                  </button>
+                  <div className="modal-thumbs" role="tablist" aria-label="Project images">
+                    {selectedImages.map((src, i) => (
+                      <button
+                        key={`${src.slice(0, 20)}-${i}`}
+                        className={`modal-thumb ${i === activeImage ? 'active' : ''}`}
+                        onClick={() => setActiveImage(i)}
+                        role="tab"
+                        aria-selected={i === activeImage}
+                        aria-label={`Show image ${i + 1}`}
+                      >
+                        <img src={src} alt={`${selectedProject.title} preview ${i + 1}`} />
+                      </button>
+                    ))}
+                  </div>
+                  <button className="thumb-nav" onClick={showNextImage} aria-label="Scroll images right">
+                    <FiChevronRight />
+                  </button>
+                </div>
+              )}
+
+              {selectedImages.length > 1 && (
                 <div className="modal-dots">
-                  {selectedProject.images.map((_, i) => (
+                  {selectedImages.map((_, i) => (
                     <button
                       key={i}
                       className={`modal-dot ${i === activeImage ? 'active' : ''}`}
@@ -182,7 +293,7 @@ const Projects = () => {
                     />
                   ))}
                 </div>
-              </div>
+              )}
 
               <div className="modal-content">
                 <h2>{selectedProject.title}</h2>

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { FiMail, FiGithub, FiLinkedin, FiTwitter, FiMapPin, FiSend, FiArrowUpRight } from 'react-icons/fi';
 import { FaWhatsapp } from 'react-icons/fa';
+import { saveContactMessage } from '../../firebase/portfolioService';
 import './Contact.css';
 
 const SOCIAL_LINKS = [
@@ -17,15 +18,23 @@ const Contact = () => {
   const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
+  const [submitError, setSubmitError] = useState('');
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSending(true);
-    await new Promise((r) => setTimeout(r, 1800));
-    setSending(false);
-    setSent(true);
+    setSubmitError('');
+
+    try {
+      await saveContactMessage(form);
+      setSent(true);
+    } catch {
+      setSubmitError('Unable to send message right now. Please try again in a moment.');
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
@@ -91,6 +100,8 @@ const Contact = () => {
                     <button type="submit" className="form-submit" disabled={sending}>
                       {sending ? 'Sending...' : <><FiSend /> Send Message</>}
                     </button>
+
+                    {submitError && <p style={{ color: 'var(--accent)', marginTop: '12px' }}>{submitError}</p>}
                   </form>
                 </>
               ) : (

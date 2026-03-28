@@ -16,7 +16,7 @@ const LoadingScreen = ({ isLoading }) => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            Johnson<span>hub</span>
+            Json<span>Tech</span>
           </motion.div>
           <motion.div
             className="loading-bar-container"

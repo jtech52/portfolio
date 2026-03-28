@@ -60,7 +60,7 @@ export const techStack = [
     name: "JavaScript",
     level: "Advanced",
     years: "2+ years",
-    projects: "10+ projects",
+    projects: "5+ projects",
     description: "Building interactive and dynamic web experiences with modern ES6+ features, async patterns, and clean component logic.",
     icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg",
   },

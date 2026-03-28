@@ -5,6 +5,7 @@ import { FiArrowRight, FiArrowUpRight, FiMail, FiPhone, FiMapPin } from 'react-i
 import { FiLinkedin } from 'react-icons/fi';
 import Button from '../../components/Button/Button';
 import profileImage from '../../assets/WhatsApp Image 2026-03-18 at 15.00.55.jpeg';
+import logoImage from '../../assets/logo.jpeg';
 import './Home.css';
 
 const fadeUp = {
@@ -40,14 +41,14 @@ const SERVICES = [
 ];
 
 const STATS = [
-  { value: '10+', label: 'Projects' },
+  { value: '5+', label: 'Projects' },
   { value: '2+', label: 'Years' },
   { value: '100%', label: 'Dedication' },
 ];
 
 const CONTACT_ITEMS = [
   { icon: <FiMail size={14} />, text: 'johnsonibekwe61@gmail.com' },
-  { icon: <FiLinkedin size={14} />, text: 'linkedin.com/in/johnson' },
+  { icon: <FiLinkedin size={14} />, text: 'linkedin.com/in/ibekwe-johnson-360b6627b' },
   { icon: <FiPhone size={14} />, text: '+234 703-9928-720' },
   { icon: <FiMapPin size={14} />, text: 'Delta State, Nigeria' },
 ];
@@ -56,6 +57,7 @@ const Home = () => {
   const [roleIndex, setRoleIndex] = useState(0);
   const [displayedRole, setDisplayedRole] = useState('');
   const [typing, setTyping] = useState(true);
+  const [profileImageUrl, setProfileImageUrl] = useState(profileImage);
 
   const ROLES = ['Fullstack Developer', 'React Specialist', 'UI Builder', 'AI User', 'Problem Solver', 'Working with LionGate', 'Open to Opportunities'];
 
@@ -101,7 +103,7 @@ const Home = () => {
               </motion.p>
 
               <motion.h1 className="hero-name" variants={fadeUp} initial="hidden" animate="visible" custom={2}>
-                Johnson
+                Ibekwe Johnson
               </motion.h1>
 
               <motion.p className="hero-desc" variants={fadeUp} initial="hidden" animate="visible" custom={3}>
@@ -136,9 +138,12 @@ const Home = () => {
               <div className="hero-image-wrap">
                 <div className="hero-image-glow" />
                 <div className="hero-image-frame">
+                  <div className="hero-logo-badge hero-logo-badge--corner">
+                    <img src={logoImage} alt="Ibekwe Johnson logo" className="hero-logo-img" />
+                  </div>
                   <div className="hero-avatar">
-                    <img className="hero-avatar-image" src={profileImage} alt="Johnson portrait" />
-                    <span>Johnson</span>
+                    <img className="hero-avatar-image" src={profileImageUrl} alt="Ibekwe Johnson portrait" />
+                    <span>JsonTech</span>
                   </div>
                 </div>
               </div>
