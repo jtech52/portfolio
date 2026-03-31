@@ -168,31 +168,6 @@
   flex-wrap: wrap;
 }
 
-/* Logo badge above image */
-.hero-logo-badge {
-  position: absolute;
-  top: 16px;
-  left: 16px;
-  z-index: 4;
-  background: rgba(15, 23, 42, 0.88);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 6px;
-  backdrop-filter: blur(14px);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.35);
-}
-
-.hero-logo-badge--corner {
-  pointer-events: none;
-}
-
-.hero-logo-img {
-  width: 40px;
-  height: 40px;
-  object-fit: contain;
-  display: block;
-}
-
 /* Right - Image */
 .hero-right {
   display: flex;
@@ -252,7 +227,7 @@
   font-family: 'Space Grotesk', sans-serif;
   font-size: 1.1rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: #f8fbff;
   padding: 8px 20px;
   border-radius: var(--radius-full);
   background: rgba(15, 23, 42, 0.85);

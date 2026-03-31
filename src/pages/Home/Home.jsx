@@ -1,11 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FiArrowRight, FiArrowUpRight, FiMail, FiPhone, FiMapPin } from 'react-icons/fi';
 import { FiLinkedin } from 'react-icons/fi';
 import Button from '../../components/Button/Button';
 import profileImage from '../../assets/WhatsApp Image 2026-03-18 at 15.00.55.jpeg';
-import logoImage from '../../assets/logo.jpeg';
 import './Home.css';
 
 const fadeUp = {
@@ -103,7 +101,7 @@ const Home = () => {
               </motion.p>
 
               <motion.h1 className="hero-name" variants={fadeUp} initial="hidden" animate="visible" custom={2}>
-                Ibekwe Johnson
+                Johnson Ibekwe
               </motion.h1>
 
               <motion.p className="hero-desc" variants={fadeUp} initial="hidden" animate="visible" custom={3}>
@@ -138,11 +136,8 @@ const Home = () => {
               <div className="hero-image-wrap">
                 <div className="hero-image-glow" />
                 <div className="hero-image-frame">
-                  <div className="hero-logo-badge hero-logo-badge--corner">
-                    <img src={logoImage} alt="Ibekwe Johnson logo" className="hero-logo-img" />
-                  </div>
                   <div className="hero-avatar">
-                    <img className="hero-avatar-image" src={profileImageUrl} alt="Ibekwe Johnson portrait" />
+                    <img className="hero-avatar-image" src={profileImageUrl} alt="Johnson Ibekwe portrait" />
                     <span>JsonTech</span>
                   </div>
                 </div>

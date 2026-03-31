@@ -62,7 +62,7 @@ const About = () => {
                 Not Just Code
               </motion.h1>
               <motion.p className="about-text" variants={fadeUp}>
-                <strong>My name is Ibekwe Johnson, and I&apos;m a FullStack developer.</strong> I
+                <strong>My name is Johnson Ibekwe, and I&apos;m a FullStack developer.</strong> I
                 don&apos;t come from a classroom I come from genuine passion, relentless practice,
                 and the belief that real-world skills matter more than paper.
               </motion.p>
